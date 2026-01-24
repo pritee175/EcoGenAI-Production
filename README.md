@@ -20,14 +20,11 @@ EcoGenAI is a comprehensive ESG (Environmental, Social, and Governance) intellig
 ## 📁 Project Structure
 
 ```
-├── EcoGenAI/                    # Main backend + legacy frontend
-│   ├── backend/                 # FastAPI backend
-│   └── frontend/                # Legacy React frontend
-├── final_frontened/             # Production Next.js frontend
-│   ├── app/                     # Next.js 16 pages
-│   ├── components/              # React components
-│   └── lib/                     # Firebase & utilities
-└── eco-gen-ai-enterprise-dashboard/  # Alternative dashboard
+EcoGenAI/
+├── backend/          # FastAPI backend with AI workload monitoring
+├── frontend-new/     # Production Next.js frontend with Firebase auth
+├── VERCEL-DEPLOYMENT.md  # Deployment guide for Vercel
+└── README.md         # This file
 ```
 
 ## 🛠️ Tech Stack
@@ -69,10 +66,9 @@ uvicorn app.main:app --reload --port 8000
 ### Frontend Setup
 
 ```bash
-cd final_frontened
+cd frontend-new
 npm install
-cp .env.local.example .env.local
-# Add Firebase credentials to .env.local
+# Add Firebase credentials to .env.local (see FIREBASE-SETUP-GUIDE.md)
 npm run dev
 ```
 
@@ -86,9 +82,9 @@ Access the application:
 1. Create Firebase project at https://console.firebase.google.com
 2. Enable Authentication (Google + Email/Password)
 3. Get your Firebase config
-4. Add credentials to `final_frontened/.env.local`
+4. Add credentials to `frontend-new/.env.local`
 
-See `final_frontened/FIREBASE-SETUP-GUIDE.md` for detailed instructions.
+See `frontend-new/FIREBASE-SETUP-GUIDE.md` for detailed instructions.
 
 ## 📊 Dashboard Pages
 
@@ -112,41 +108,38 @@ See `final_frontened/FIREBASE-SETUP-GUIDE.md` for detailed instructions.
 
 ## 📝 Documentation
 
-- **Frontend Setup**: `final_frontened/README.md`
-- **Firebase Guide**: `final_frontened/FIREBASE-SETUP-GUIDE.md`
-- **Quick Start**: `final_frontened/QUICK-START.md`
-- **Backend API**: `EcoGenAI/backend/README.md`
-- **Features**: `EcoGenAI/FEATURES-COMPLETE.md`
+- **Deployment Guide**: `VERCEL-DEPLOYMENT.md`
+- **Frontend Setup**: `frontend-new/README.md`
+- **Firebase Guide**: `frontend-new/FIREBASE-SETUP-GUIDE.md`
+- **Quick Start**: `frontend-new/QUICK-START.md`
+- **Backend API**: `backend/README.md`
 
 ## 🧪 Testing
 
 ```bash
 # Backend tests
-cd EcoGenAI/backend
+cd backend
 pytest
 
 # Frontend tests
-cd final_frontened
+cd frontend-new
 npm test
-
-# Test all features
-cd EcoGenAI
-.\test-all-features.ps1
 ```
 
 ## 🚢 Deployment
 
+See `VERCEL-DEPLOYMENT.md` for complete deployment instructions.
+
 ### Backend
-- Deploy to any Python hosting (AWS, GCP, Azure, Heroku)
-- Set environment variables
-- Run migrations
-- Start with `uvicorn app.main:app --host 0.0.0.0 --port 8000`
+- Deploy to Railway, Render, Heroku, AWS, or any Python hosting
+- Set environment variables from `.env`
+- Run: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
 
 ### Frontend
-- Deploy to Vercel, Netlify, or any Node.js hosting
+- Deploy to Vercel (recommended) - see `VERCEL-DEPLOYMENT.md`
 - Set Firebase environment variables
+- Root directory: `frontend-new`
 - Build: `npm run build`
-- Start: `npm start`
 
 ## 🤝 Contributing
 
