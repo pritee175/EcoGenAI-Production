@@ -105,3 +105,65 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Compact Spacing & Mobile Responsive Styles */
+@layer utilities {
+  /* Reduce spacing between cards and sections */
+  .dashboard-container {
+    @apply space-y-3 md:space-y-4;
+  }
+  
+  .card-grid {
+    @apply grid gap-3 md:gap-4;
+  }
+  
+  /* Compact padding for cards */
+  .card-compact {
+    @apply p-3 md:p-4;
+  }
+  
+  /* Mobile-responsive grid layouts */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4;
+  }
+  
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4;
+  }
+  
+  /* Compact headers */
+  .page-header {
+    @apply mb-3 md:mb-4;
+  }
+  
+  /* Mobile-friendly text sizes */
+  .text-responsive {
+    @apply text-sm md:text-base;
+  }
+  
+  .heading-responsive {
+    @apply text-lg md:text-xl lg:text-2xl;
+  }
+  
+  /* Scrollable tables on mobile */
+  .table-container {
+    @apply overflow-x-auto -mx-3 md:mx-0;
+  }
+  
+  /* Mobile sidebar adjustments */
+  @media (max-width: 768px) {
+    .sidebar {
+      @apply w-full;
+    }
+  }
+  
+  /* Compact stat cards */
+  .stat-card {
+    @apply p-3 md:p-4 space-y-1 md:space-y-2;
+  }
+  
+  /* Reduce chart heights on mobile */
+  .chart-container {
+    @apply h-48 md:h-64 lg:h-80;
+  }
+}

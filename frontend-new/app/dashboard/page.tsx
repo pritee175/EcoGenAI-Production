@@ -128,9 +128,9 @@ export default function DashboardPage() {
     <div className="min-h-screen">
       <Header title="ESG Overview" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* Live Status Indicator */}
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-xs md:text-sm">
           <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
           <span className="text-muted-foreground">
             {isConnected ? 'Live Updates Active' : 'Connecting...'}
@@ -138,7 +138,7 @@ export default function DashboardPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid-responsive">
           <KPICard
             title="Active AI Workloads"
             value={workloads?.length?.toString() || '0'}
@@ -174,34 +174,35 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts Row */}
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid-responsive-2">
           {/* Energy by Model */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-foreground">Energy Consumption by AI Model</CardTitle>
-              <CardDescription>kWh consumption breakdown</CardDescription>
+          <Card className="bg-card border-border card-compact">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base md:text-lg text-foreground">Energy by AI Model</CardTitle>
+              <CardDescription className="text-xs md:text-sm">kWh consumption</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 {energyByModelData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={energyByModelData} layout="vertical">
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis type="number" stroke="#6b7280" fontSize={12} />
-                      <YAxis dataKey="model" type="category" stroke="#6b7280" fontSize={12} width={100} />
+                      <XAxis type="number" stroke="#6b7280" fontSize={10} />
+                      <YAxis dataKey="model" type="category" stroke="#6b7280" fontSize={10} width={80} />
                       <Tooltip 
                         contentStyle={{ 
                           backgroundColor: '#ffffff', 
                           border: '1px solid #e5e7eb',
                           borderRadius: '8px',
-                          color: '#1a1a1a'
+                          color: '#1a1a1a',
+                          fontSize: '12px'
                         }} 
                       />
                       <Bar dataKey="energy" fill="#0066b3" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
                     No energy data available
                   </div>
                 )}
@@ -210,13 +211,13 @@ export default function DashboardPage() {
           </Card>
 
           {/* Region Distribution */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-foreground">Carbon by Region</CardTitle>
-              <CardDescription>Distribution of emissions (kg CO₂)</CardDescription>
+          <Card className="bg-card border-border card-compact">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base md:text-lg text-foreground">Carbon by Region</CardTitle>
+              <CardDescription className="text-xs md:text-sm">Emissions (kg CO₂)</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 {regionDistributionData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -224,11 +225,12 @@ export default function DashboardPage() {
                         data={regionDistributionData}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
+                        innerRadius={40}
+                        outerRadius={70}
                         paddingAngle={2}
                         dataKey="value"
                         label={(entry) => `${entry.name}: ${entry.value.toFixed(1)}`}
+                        labelStyle={{ fontSize: '10px' }}
                       >
                         {regionDistributionData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.color} />
@@ -239,13 +241,14 @@ export default function DashboardPage() {
                           backgroundColor: '#ffffff', 
                           border: '1px solid #e5e7eb',
                           borderRadius: '8px',
-                          color: '#1a1a1a'
+                          color: '#1a1a1a',
+                          fontSize: '12px'
                         }} 
                       />
                     </PieChart>
                   </ResponsiveContainer>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
                     No carbon data available
                   </div>
                 )}
@@ -255,34 +258,34 @@ export default function DashboardPage() {
         </div>
 
         {/* Active Workloads Table */}
-        <Card className="bg-card border-border">
-          <CardHeader>
+        <Card className="bg-card border-border card-compact">
+          <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-foreground">Active AI Workloads</CardTitle>
-                <CardDescription>Real-time monitoring of running workloads</CardDescription>
+                <CardTitle className="text-base md:text-lg text-foreground">Active AI Workloads</CardTitle>
+                <CardDescription className="text-xs md:text-sm">Real-time monitoring</CardDescription>
               </div>
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+              <span className="flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
                 {workloads.length}
               </span>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {workloads && workloads.length > 0 ? (
                 workloads.slice(0, 5).map((workload) => (
                   <div
                     key={workload.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-secondary/50 p-3"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between rounded-lg border border-border bg-secondary/50 p-2 md:p-3 gap-2"
                   >
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-foreground">{workload.model_name || 'Unknown'}</p>
-                      <p className="text-xs text-muted-foreground">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs md:text-sm font-medium text-foreground truncate">{workload.model_name || 'Unknown'}</p>
+                      <p className="text-xs text-muted-foreground truncate">
                         {workload.job_type || 'N/A'} • {workload.gpu_count || 0} GPUs • {workload.cloud_region || 'N/A'}
                       </p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-foreground">
+                    <div className="text-left sm:text-right flex-shrink-0">
+                      <p className="text-xs md:text-sm font-medium text-foreground">
                         {Math.floor((workload.runtime_seconds || 0) / 60)}m {(workload.runtime_seconds || 0) % 60}s
                       </p>
                       <p className="text-xs text-muted-foreground">{workload.status || 'unknown'}</p>
@@ -290,7 +293,7 @@ export default function DashboardPage() {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 text-muted-foreground">
+                <div className="text-center py-6 text-muted-foreground text-sm">
                   No active workloads
                 </div>
               )}
