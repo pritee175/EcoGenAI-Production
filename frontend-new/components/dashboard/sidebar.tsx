@@ -16,8 +16,7 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronLeft,
-  ChevronRight,
-  Languages
+  ChevronRight
 } from "lucide-react"
 import { useState } from "react"
 import { logOut } from "@/lib/firebase"
@@ -40,7 +39,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
-  const { mode, toggleMode, t } = useLanguage()
+  const { t } = useLanguage()
 
   const handleLogout = async () => {
     await logOut()
@@ -109,24 +108,8 @@ export function Sidebar() {
           })}
         </nav>
 
-        {/* Language Toggle & Logout */}
-        <div className="border-t p-2 bg-white space-y-1" style={{ borderColor: '#d4d4d4' }}>
-          <button
-            onClick={toggleMode}
-            className="flex w-full items-center gap-3 rounded px-3 py-2.5 text-sm hover:bg-gray-50 transition-colors"
-            style={{ color: '#333333' }}
-            title={collapsed ? (mode === 'technical' ? 'Switch to Simple' : 'Switch to Technical') : undefined}
-          >
-            <Languages className="h-5 w-5 flex-shrink-0" style={{ color: '#666666' }} />
-            {!collapsed && (
-              <span className="flex items-center justify-between w-full">
-                <span>{mode === 'technical' ? 'Technical' : 'Simple'}</span>
-                <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#e6f2f9', color: '#003781' }}>
-                  {mode === 'technical' ? 'Tech' : 'Easy'}
-                </span>
-              </span>
-            )}
-          </button>
+        {/* Logout */}
+        <div className="border-t p-2 bg-white" style={{ borderColor: '#d4d4d4' }}>
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded px-3 py-2.5 text-sm hover:bg-gray-50 transition-colors"

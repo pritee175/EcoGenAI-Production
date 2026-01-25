@@ -1,6 +1,6 @@
 "use client"
 
-import { Activity, Bell, User } from "lucide-react"
+import { Activity, Bell, User, Languages } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -10,12 +10,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useLanguage } from "@/lib/language-context"
 
 interface HeaderProps {
   title: string
 }
 
 export function Header({ title }: HeaderProps) {
+  const { mode, toggleMode } = useLanguage()
+  
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white backdrop-blur" style={{ borderColor: '#d4d4d4' }}>
       <div className="flex items-center gap-4">
@@ -23,6 +26,24 @@ export function Header({ title }: HeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        {/* Simple Language Mode Toggle */}
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={toggleMode}
+          className="flex items-center gap-2 border-gray-300 hover:bg-gray-50"
+        >
+          <Languages className="h-4 w-4" style={{ color: '#666666' }} />
+          <span className="hidden sm:inline text-sm" style={{ color: '#333333' }}>
+            Simple Language Mode
+          </span>
+          <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ 
+            backgroundColor: mode === 'simple' ? '#22c55e' : '#e5e7eb',
+            color: mode === 'simple' ? '#ffffff' : '#666666'
+          }}>
+            {mode === 'simple' ? 'ON' : 'OFF'}
+          </span>
+        </Button>
         {/* Live Monitoring Indicator */}
         <div className="flex items-center gap-2 rounded-full px-3 py-1" style={{ backgroundColor: '#e6f7ed' }}>
           <span className="relative flex h-2 w-2">
