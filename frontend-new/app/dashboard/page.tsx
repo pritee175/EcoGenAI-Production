@@ -29,8 +29,10 @@ import {
   getCarbonByRegion,
   createWebSocket
 } from "@/lib/api"
+import { useLanguage } from "@/lib/language-context"
 
 export default function DashboardPage() {
+  const { t } = useLanguage()
   const [workloads, setWorkloads] = useState<any[]>([])
   const [energySummary, setEnergySummary] = useState<any>(null)
   const [carbonSummary, setCarbonSummary] = useState<any>(null)
@@ -126,45 +128,45 @@ export default function DashboardPage() {
   }
   return (
     <div className="min-h-screen">
-      <Header title="ESG Overview" />
+      <Header title={t("ESG") + " Overview"} />
       
       <div className="dashboard-container">
         {/* Live Status Indicator */}
         <div className="flex items-center gap-2 text-xs md:text-sm">
           <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
           <span className="text-muted-foreground">
-            {isConnected ? 'Live Updates Active' : 'Connecting...'}
+            {isConnected ? t('Real-time') + ' Updates ' + t('Active') : 'Connecting...'}
           </span>
         </div>
 
         {/* KPI Cards */}
         <div className="grid-responsive">
           <KPICard
-            title="Active AI Workloads"
+            title={t("Active") + " " + t("AI") + " " + t("Workloads")}
             value={workloads?.length?.toString() || '0'}
-            subtitle="Currently running"
-            change={{ value: `${workloads?.length || 0} active`, trend: "up" }}
+            subtitle={t("Currently") + " running"}
+            change={{ value: `${workloads?.length || 0} ${t("Active").toLowerCase()}`, trend: "up" }}
             icon={Cpu}
             iconColor="text-primary"
           />
           <KPICard
-            title="Energy Consumption"
-            value={`${energySummary?.total_energy_today_kwh?.toFixed(1) || '0.0'} kWh`}
+            title={t("Energy Consumption")}
+            value={`${energySummary?.total_energy_today_kwh?.toFixed(1) || '0.0'} ${t("kWh")}`}
             subtitle="Estimated today"
-            change={{ value: `${energySummary?.total_workloads || 0} workloads`, trend: "neutral" }}
+            change={{ value: `${energySummary?.total_workloads || 0} ${t("Workloads").toLowerCase()}`, trend: "neutral" }}
             icon={Zap}
             iconColor="text-warning"
           />
           <KPICard
-            title="CO₂ Emissions"
+            title={t("CO₂ Emissions")}
             value={`${carbonSummary?.total_carbon_kg?.toFixed(2) || '0.00'} kg`}
-            subtitle="Total carbon footprint"
+            subtitle={t("Total") + " " + t("Carbon Footprint").toLowerCase()}
             change={{ value: `${carbonByRegion?.length || 0} regions`, trend: "down" }}
             icon={Leaf}
             iconColor="text-success"
           />
           <KPICard
-            title="ESG Score"
+            title={t("ESG Score")}
             value={`${esgScore?.overall_score?.toFixed(0) || '0'}/100`}
             subtitle="Sustainability rating"
             change={{ value: esgScore?.grade || 'N/A', trend: "up" }}
@@ -178,8 +180,8 @@ export default function DashboardPage() {
           {/* Energy by Model */}
           <Card className="bg-card border-border card-compact">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base md:text-lg text-foreground">Energy by AI Model</CardTitle>
-              <CardDescription className="text-xs md:text-sm">kWh consumption</CardDescription>
+              <CardTitle className="text-base md:text-lg text-foreground">{t("Energy")} by {t("AI")} {t("Model")}</CardTitle>
+              <CardDescription className="text-xs md:text-sm">{t("kWh")} consumption</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="chart-container">
@@ -213,8 +215,8 @@ export default function DashboardPage() {
           {/* Region Distribution */}
           <Card className="bg-card border-border card-compact">
             <CardHeader className="pb-2">
-              <CardTitle className="text-base md:text-lg text-foreground">Carbon by Region</CardTitle>
-              <CardDescription className="text-xs md:text-sm">Emissions (kg CO₂)</CardDescription>
+              <CardTitle className="text-base md:text-lg text-foreground">{t("Carbon Footprint")} by Region</CardTitle>
+              <CardDescription className="text-xs md:text-sm">{t("CO₂ Emissions")} (kg)</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="chart-container">
@@ -262,8 +264,8 @@ export default function DashboardPage() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-base md:text-lg text-foreground">Active AI Workloads</CardTitle>
-                <CardDescription className="text-xs md:text-sm">Real-time monitoring</CardDescription>
+                <CardTitle className="text-base md:text-lg text-foreground">{t("Active")} {t("AI")} {t("Workloads")}</CardTitle>
+                <CardDescription className="text-xs md:text-sm">{t("Real-time")} monitoring</CardDescription>
               </div>
               <span className="flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
                 {workloads.length}
@@ -281,7 +283,7 @@ export default function DashboardPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-xs md:text-sm font-medium text-foreground truncate">{workload.model_name || 'Unknown'}</p>
                       <p className="text-xs text-muted-foreground truncate">
-                        {workload.job_type || 'N/A'} • {workload.gpu_count || 0} GPUs • {workload.cloud_region || 'N/A'}
+                        {workload.job_type || 'N/A'} • {workload.gpu_count || 0} {t("GPU")}s • {workload.cloud_region || 'N/A'}
                       </p>
                     </div>
                     <div className="text-left sm:text-right flex-shrink-0">

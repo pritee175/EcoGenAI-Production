@@ -2,15 +2,17 @@ import React from "react"
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { LanguageProvider } from '@/lib/language-context'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'EcoGenAI - Allianz ESG Intelligence Platform',
-  description: 'Secure access to EcoGenAI – Allianz ESG Intelligence Platform for AI sustainability monitoring and governance',
+  title: 'EcoGenAI - ESG Intelligence Platform',
+  description: 'EcoGenAI – ESG Intelligence Platform for AI sustainability monitoring and governance',
   generator: 'v0.app',
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
   icons: {
     icon: [
       {
@@ -38,7 +40,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <body className={`font-sans antialiased bg-white text-gray-900`}>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
         <Analytics />
       </body>
     </html>

@@ -16,10 +16,12 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Languages
 } from "lucide-react"
 import { useState } from "react"
 import { logOut } from "@/lib/firebase"
+import { useLanguage } from "@/lib/language-context"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -38,6 +40,7 @@ export function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
+  const { mode, toggleMode, t } = useLanguage()
 
   const handleLogout = async () => {
     await logOut()
@@ -82,6 +85,7 @@ export function Sidebar() {
           {navItems.map((item) => {
             const isActive = pathname === item.href || 
               (item.href !== "/dashboard" && pathname.startsWith(item.href))
+            const translatedLabel = t(item.label)
             return (
               <Link
                 key={item.href}
@@ -96,17 +100,33 @@ export function Sidebar() {
                   backgroundColor: isActive ? '#e6f2f9' : 'transparent',
                   color: isActive ? '#003781' : '#333333'
                 }}
-                title={collapsed ? item.label : undefined}
+                title={collapsed ? translatedLabel : undefined}
               >
                 <item.icon className="h-5 w-5 flex-shrink-0" style={{ color: isActive ? '#003781' : '#666666' }} />
-                {!collapsed && <span>{item.label}</span>}
+                {!collapsed && <span>{translatedLabel}</span>}
               </Link>
             )
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="border-t p-2 bg-white" style={{ borderColor: '#d4d4d4' }}>
+        {/* Language Toggle & Logout */}
+        <div className="border-t p-2 bg-white space-y-1" style={{ borderColor: '#d4d4d4' }}>
+          <button
+            onClick={toggleMode}
+            className="flex w-full items-center gap-3 rounded px-3 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+            style={{ color: '#333333' }}
+            title={collapsed ? (mode === 'technical' ? 'Switch to Simple' : 'Switch to Technical') : undefined}
+          >
+            <Languages className="h-5 w-5 flex-shrink-0" style={{ color: '#666666' }} />
+            {!collapsed && (
+              <span className="flex items-center justify-between w-full">
+                <span>{mode === 'technical' ? 'Technical' : 'Simple'}</span>
+                <span className="text-xs px-2 py-0.5 rounded" style={{ backgroundColor: '#e6f2f9', color: '#003781' }}>
+                  {mode === 'technical' ? 'Tech' : 'Easy'}
+                </span>
+              </span>
+            )}
+          </button>
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded px-3 py-2.5 text-sm hover:bg-gray-50 transition-colors"
