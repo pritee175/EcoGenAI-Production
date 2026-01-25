@@ -58,7 +58,7 @@ export default function CarbonPage() {
     <div className="min-h-screen">
       <Header title="Carbon Footprint" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* KPI Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KPICard
@@ -147,7 +147,7 @@ export default function CarbonPage() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid-responsive-2">
           {/* Carbon by Model */}
           <Card className="bg-card border-border">
             <CardHeader>
@@ -155,21 +155,22 @@ export default function CarbonPage() {
               <CardDescription>Actual vs baseline carbon footprint (kg CO₂e)</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={carbonByModelData} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis type="number" stroke="#6b7280" fontSize={12} />
-                    <YAxis dataKey="model" type="category" stroke="#6b7280" fontSize={11} width={90} />
+                    <XAxis type="number" stroke="#6b7280" fontSize={10} />
+                    <YAxis dataKey="model" type="category" stroke="#6b7280" fontSize={10} width={80} />
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: '#ffffff', 
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px',
-                        color: '#1a1a1a'
+                        color: '#1a1a1a',
+                        fontSize: '12px'
                       }} 
                     />
-                    <Legend wrapperStyle={{ color: '#6b7280' }} />
+                    <Legend wrapperStyle={{ color: '#6b7280', fontSize: '12px' }} />
                     <Bar dataKey="baseline" fill="#e5e7eb" name="Baseline" radius={[0, 4, 4, 0]} />
                     <Bar dataKey="carbon" fill="#22c55e" name="Actual" radius={[0, 4, 4, 0]} />
                   </BarChart>
@@ -185,7 +186,7 @@ export default function CarbonPage() {
               <CardDescription>Emissions, offsets, and net carbon (tCO₂e)</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <ComposedChart data={monthlyTrendData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />

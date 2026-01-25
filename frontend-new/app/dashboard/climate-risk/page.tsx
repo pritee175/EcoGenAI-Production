@@ -131,7 +131,7 @@ export default function ClimateRiskPage() {
   return (
     <div className="min-h-screen">
       <Header title="Climate Risk" />
-      <div className="space-y-6">
+      <div className="dashboard-container">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Climate Risk Assessment</h1>

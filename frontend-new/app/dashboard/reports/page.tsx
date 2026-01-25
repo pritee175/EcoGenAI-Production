@@ -160,7 +160,7 @@ export default function ReportsPage() {
   return (
     <div className="min-h-screen">
       <Header title="Reports" />
-      <div className="space-y-6">
+      <div className="dashboard-container">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Reports & Analytics</h1>

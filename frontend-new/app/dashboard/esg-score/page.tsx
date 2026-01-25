@@ -58,7 +58,7 @@ export default function ESGScorePage() {
     <div className="min-h-screen">
       <Header title="ESG Score" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* Main Score Display */}
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Score Card */}

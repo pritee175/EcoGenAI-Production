@@ -62,7 +62,7 @@ export default function AIMonitoringPage() {
     <div className="min-h-screen">
       <Header title="AI Monitoring" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* Summary Cards */}
         <div className="grid gap-4 md:grid-cols-4">
           <Card className="bg-card border-border">

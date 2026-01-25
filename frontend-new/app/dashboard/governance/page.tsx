@@ -100,7 +100,7 @@ export default function GovernancePage() {
     <div className="min-h-screen">
       <Header title="Governance" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* Summary Stats */}
         <div className="grid gap-4 md:grid-cols-4">
           <Card className="bg-card border-border">

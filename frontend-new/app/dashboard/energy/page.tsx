@@ -55,7 +55,7 @@ export default function EnergyPage() {
     <div className="min-h-screen">
       <Header title="Energy Consumption" />
       
-      <div className="space-y-6">
+      <div className="dashboard-container">
         {/* KPI Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <KPICard
@@ -147,7 +147,7 @@ export default function EnergyPage() {
           </CardContent>
         </Card>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid-responsive-2">
           {/* Energy by Service */}
           <Card className="bg-card border-border">
             <CardHeader>
@@ -155,7 +155,7 @@ export default function EnergyPage() {
               <CardDescription>Breakdown by compute resource (kWh)</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={energyByServiceData} layout="vertical">
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -186,7 +186,7 @@ export default function EnergyPage() {
               <CardDescription>Average hourly consumption (kWh)</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-[300px]">
+              <div className="chart-container">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={hourlyPatternData}>
                     <defs>
