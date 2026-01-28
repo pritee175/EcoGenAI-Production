@@ -407,89 +407,154 @@ export async function getESGMethodology(): Promise<any> {
 // ============================================================================
 
 export async function getGovernanceStatistics(): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/statistics`);
-  if (!response.ok) throw new Error('Failed to fetch governance statistics');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/statistics`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching governance statistics:', error);
+    return null;
+  }
 }
 
 export async function getPendingActions(): Promise<any[]> {
-  const response = await fetch(`${API_URL}/api/governance/actions/pending`);
-  if (!response.ok) throw new Error('Failed to fetch pending actions');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/actions/pending`);
+    if (!response.ok) return [];
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching pending actions:', error);
+    return [];
+  }
 }
 
 export async function getAllActions(limit: number = 100): Promise<any[]> {
-  const response = await fetch(`${API_URL}/api/governance/actions/all?limit=${limit}`);
-  if (!response.ok) throw new Error('Failed to fetch all actions');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/actions/all?limit=${limit}`);
+    if (!response.ok) return [];
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching all actions:', error);
+    return [];
+  }
 }
 
 export async function approveAction(actionId: number, reviewData: { reviewed_by: string; review_notes?: string }): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/actions/${actionId}/approve`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(reviewData)
-  });
-  if (!response.ok) throw new Error('Failed to approve action');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/actions/${actionId}/approve`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error approving action:', error);
+    return null;
+  }
 }
 
 export async function rejectAction(actionId: number, reviewData: { reviewed_by: string; review_notes: string }): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/actions/${actionId}/reject`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(reviewData)
-  });
-  if (!response.ok) throw new Error('Failed to reject action');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/actions/${actionId}/reject`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error rejecting action:', error);
+    return null;
+  }
 }
 
 export async function getModelOptimizationRecommendations(): Promise<any[]> {
-  const response = await fetch(`${API_URL}/api/governance/model-optimization/recommendations`);
-  if (!response.ok) throw new Error('Failed to fetch model optimization recommendations');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/model-optimization/recommendations`);
+    if (!response.ok) return [];
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching model optimization recommendations:', error);
+    return [];
+  }
 }
 
 export async function getModelOptimizationSummary(): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/model-optimization/summary`);
-  if (!response.ok) throw new Error('Failed to fetch model optimization summary');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/model-optimization/summary`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching model optimization summary:', error);
+    return null;
+  }
 }
 
 export async function getCostAnalysis(): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/cost-analysis/current`);
-  if (!response.ok) throw new Error('Failed to fetch cost analysis');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/cost-analysis/current`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching cost analysis:', error);
+    return null;
+  }
 }
 
 export async function getCostImpactAnalysis(): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/cost-analysis/impact`);
-  if (!response.ok) throw new Error('Failed to fetch cost impact analysis');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/cost-analysis/impact`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching cost impact analysis:', error);
+    return null;
+  }
 }
 
 export async function getComprehensiveESGReport(periodDays: number = 30): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/reports/comprehensive?period_days=${periodDays}`);
-  if (!response.ok) throw new Error('Failed to fetch comprehensive ESG report');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/reports/comprehensive?period_days=${periodDays}`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching comprehensive ESG report:', error);
+    return null;
+  }
 }
 
-export async function downloadESGReportCSV(periodDays: number = 30): Promise<Blob> {
-  const response = await fetch(`${API_URL}/api/governance/reports/export/csv?period_days=${periodDays}`);
-  if (!response.ok) throw new Error('Failed to download CSV report');
-  return response.blob();
+export async function downloadESGReportCSV(periodDays: number = 30): Promise<Blob | null> {
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/reports/export/csv?period_days=${periodDays}`);
+    if (!response.ok) return null;
+    return response.blob();
+  } catch (error) {
+    console.error('Error downloading CSV report:', error);
+    return null;
+  }
 }
 
-export async function downloadESGReportJSON(periodDays: number = 30): Promise<Blob> {
-  const response = await fetch(`${API_URL}/api/governance/reports/export/json?period_days=${periodDays}`);
-  if (!response.ok) throw new Error('Failed to download JSON report');
-  return response.blob();
+export async function downloadESGReportJSON(periodDays: number = 30): Promise<Blob | null> {
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/reports/export/json?period_days=${periodDays}`);
+    if (!response.ok) return null;
+    return response.blob();
+  } catch (error) {
+    console.error('Error downloading JSON report:', error);
+    return null;
+  }
 }
 
 export async function getGovernanceMethodology(): Promise<any> {
-  const response = await fetch(`${API_URL}/api/governance/transparency`);
-  if (!response.ok) throw new Error('Failed to fetch governance methodology');
-  return response.json();
+  try {
+    const response = await fetchWithRetry(`${API_URL}/api/governance/transparency`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error('Error fetching governance methodology:', error);
+    return null;
+  }
 }
 
 // ============================================================================

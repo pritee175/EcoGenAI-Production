@@ -1,5 +1,5 @@
 import React from "react"
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { LanguageProvider } from '@/lib/language-context'
@@ -12,7 +12,6 @@ export const metadata: Metadata = {
   title: 'EcoGenAI - ESG Intelligence Platform',
   description: 'EcoGenAI – ESG Intelligence Platform for AI sustainability monitoring and governance',
   generator: 'v0.app',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
   icons: {
     icon: [
       {
@@ -30,6 +29,12 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 }
 
 export default function RootLayout({

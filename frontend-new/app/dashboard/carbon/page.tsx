@@ -19,7 +19,8 @@ import {
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
-  Radar
+  Radar,
+  Cell
 } from "recharts"
 
 const carbonByModelData = [
@@ -95,11 +96,60 @@ export default function CarbonPage() {
           />
         </div>
 
-        {/* Carbon by Region */}
+        {/* Carbon by Region - Chart */}
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-foreground">Regional Carbon Impact</CardTitle>
-            <CardDescription>CO₂ emissions by deployment region (kg CO₂e)</CardDescription>
+            <CardTitle className="text-foreground">Carbon Footprint by Region</CardTitle>
+            <CardDescription>CO₂ Emissions (kg)</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={regionCarbonData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                  <XAxis 
+                    dataKey="region" 
+                    stroke="#6b7280" 
+                    fontSize={11} 
+                    angle={-15}
+                    textAnchor="end"
+                    height={80}
+                  />
+                  <YAxis stroke="#6b7280" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#ffffff', 
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px',
+                      color: '#1a1a1a'
+                    }}
+                    formatter={(value: any, name: string) => {
+                      if (name === 'carbon') return [`${value} kg CO₂e`, 'Emissions']
+                      return [value, name]
+                    }}
+                  />
+                  <Bar dataKey="carbon" radius={[8, 8, 0, 0]}>
+                    {regionCarbonData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={
+                          entry.intensity < 0.2 ? '#22c55e' :
+                          entry.intensity < 0.4 ? '#f59e0b' : '#ef4444'
+                        } 
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Carbon by Region - Table */}
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">Regional Carbon Impact Details</CardTitle>
+            <CardDescription>Detailed breakdown by deployment region</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">

@@ -43,7 +43,6 @@ const translations: Record<string, string> = {
   
   // Energy & Carbon
   "Energy Consumption": "Electricity used",
-  "kWh": "Units of electricity",
   "Carbon Footprint": "Pollution caused",
   "CO₂ Emissions": "Carbon pollution",
   "CO2 Emissions": "Carbon pollution",
