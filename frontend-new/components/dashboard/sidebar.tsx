@@ -16,7 +16,8 @@ import {
   LayoutDashboard,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  User
 } from "lucide-react"
 import { useState } from "react"
 import { logOut } from "@/lib/firebase"
@@ -32,7 +33,8 @@ const navItems = [
   { href: "/dashboard/esg-score", label: "ESG Score", icon: BarChart3 },
   { href: "/dashboard/reports", label: "Reports", icon: FileText },
   { href: "/dashboard/climate-risk", label: "Climate Risk", icon: Cloud },
-  { href: "/dashboard/auditor-bot", label: "Auditor Bot", icon: Bot },
+  { href: "/dashboard/auditor", label: "ESG Auditor", icon: Bot },
+  { href: "/dashboard/profile", label: "Profile", icon: User },
 ]
 
 export function Sidebar() {

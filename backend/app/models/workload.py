@@ -29,6 +29,7 @@ class AIWorkload(Base):
     job_type = Column(Enum(JobType), nullable=False)
     gpu_count = Column(Integer, nullable=False)
     cloud_region = Column(String, nullable=False)  # India, EU, US
+    cloud_instance_id = Column(String, nullable=True, index=True)  # Cloud provider instance ID (for cloud-detected workloads)
     start_time = Column(DateTime, default=datetime.utcnow, nullable=False)
     runtime_seconds = Column(Float, default=0.0, nullable=False)
     status = Column(Enum(JobStatus), default=JobStatus.RUNNING, nullable=False)
@@ -43,6 +44,7 @@ class AIWorkload(Base):
             "job_type": self.job_type.value,
             "gpu_count": self.gpu_count,
             "cloud_region": self.cloud_region,
+            "cloud_instance_id": self.cloud_instance_id,
             "start_time": self.start_time.isoformat(),
             "runtime_seconds": round(self.runtime_seconds, 2),
             "status": self.status.value,

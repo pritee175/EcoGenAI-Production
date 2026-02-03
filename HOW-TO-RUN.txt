@@ -1,0 +1,92 @@
+================================================================================
+                    EcoGenAI - HOW TO RUN THE PROJECT
+================================================================================
+
+EASIEST METHOD - ONE CLICK:
+---------------------------
+1. Navigate to the EcoGenAI folder
+2. Double-click: start-all.bat  (or start-all.ps1)
+3. Wait 15 seconds
+4. Open browser: http://localhost:3000
+
+That's it! Two windows will open automatically.
+
+
+MANUAL METHOD - TWO TERMINALS:
+-------------------------------
+Open TWO separate PowerShell/CMD windows:
+
+TERMINAL 1 (Backend):
+  cd EcoGenAI
+  .\start-backend.ps1
+
+TERMINAL 2 (Frontend):
+  cd EcoGenAI
+  .\start-frontend.ps1
+
+Wait 15 seconds, then open: http://localhost:3000
+
+
+FIRST TIME ONLY - INSTALL DEPENDENCIES:
+----------------------------------------
+Backend:
+  cd EcoGenAI/backend
+  pip install -r requirements.txt
+
+Frontend:
+  cd EcoGenAI/frontend-new
+  npm install
+
+
+WHAT YOU'LL SEE:
+----------------
+Backend Terminal:
+  ✓ Uvicorn running on http://0.0.0.0:8000
+  ✓ Application startup complete
+
+Frontend Terminal:
+  ✓ Ready in 2.5s
+  ✓ Local: http://localhost:3000
+
+
+ACCESS POINTS:
+--------------
+Frontend:     http://localhost:3000
+Backend API:  http://localhost:8000
+API Docs:     http://localhost:8000/docs
+
+
+STOP THE APPLICATION:
+---------------------
+Press Ctrl+C in each terminal window
+
+
+TROUBLESHOOTING:
+----------------
+Port in use?
+  netstat -ano | findstr :8000
+  taskkill /PID <number> /F
+
+Module not found?
+  Backend:  cd EcoGenAI/backend && pip install -r requirements.txt
+  Frontend: cd EcoGenAI/frontend-new && npm install
+
+
+NEED MORE HELP?
+---------------
+See detailed guides:
+  - QUICK-START.md (simple guide)
+  - START-PROJECT.md (complete guide)
+
+
+================================================================================
+                              QUICK REFERENCE
+================================================================================
+
+Component       URL                              Port
+---------       ---                              ----
+Frontend        http://localhost:3000            3000
+Backend         http://localhost:8000            8000
+API Docs        http://localhost:8000/docs       8000
+
+================================================================================

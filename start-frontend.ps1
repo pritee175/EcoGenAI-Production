@@ -1,3 +1,4 @@
 Write-Host "Starting EcoGenAI Frontend..." -ForegroundColor Cyan
-Set-Location frontend
+Write-Host "Frontend will be available at: http://localhost:3000" -ForegroundColor Green
+Set-Location frontend-new
 npm run dev

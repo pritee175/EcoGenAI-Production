@@ -6,7 +6,51 @@ Enterprise-grade platform for AI sustainability monitoring and ESG compliance.
 
 EcoGenAI is a comprehensive ESG (Environmental, Social, and Governance) intelligence platform that monitors AI workloads, calculates carbon footprints, and provides actionable insights for sustainable AI operations.
 
-## 🚀 Features
+## 🚀 Quick Start
+
+### Easiest Way - One Click
+1. Navigate to the `EcoGenAI` folder
+2. Double-click: **`start-all.bat`** (or `start-all.ps1`)
+3. Wait 15 seconds for servers to start
+4. Open browser: **http://localhost:3000**
+
+### Manual Start - Two Terminals
+**Terminal 1 (Backend):**
+```powershell
+cd EcoGenAI
+.\start-backend.ps1
+```
+
+**Terminal 2 (Frontend):**
+```powershell
+cd EcoGenAI
+.\start-frontend.ps1
+```
+
+Then open: **http://localhost:3000**
+
+### First Time Setup
+```powershell
+# Install backend dependencies
+cd EcoGenAI/backend
+pip install -r requirements.txt
+
+# Install frontend dependencies
+cd EcoGenAI/frontend-new
+npm install
+```
+
+📖 **See [QUICK-START.md](QUICK-START.md) for detailed instructions**
+
+## 🌐 Access Points
+
+| Component | URL | Port |
+|-----------|-----|------|
+| Frontend | http://localhost:3000 | 3000 |
+| Backend API | http://localhost:8000 | 8000 |
+| API Docs | http://localhost:8000/docs | 8000 |
+
+## ✨ Features
 
 - **Real-time AI Monitoring** - Track AI workloads with WebSocket updates
 - **Energy Consumption Analysis** - Calculate and monitor energy usage (kWh)
@@ -15,16 +59,36 @@ EcoGenAI is a comprehensive ESG (Environmental, Social, and Governance) intellig
 - **Optimization Recommendations** - AI-powered suggestions for emission reduction
 - **Climate Risk Analysis** - Future emission projections and risk assessment
 - **Governance & Compliance** - Approval workflows and audit trails
+- **User Profiles** - Complete profile management with preferences
+- **Cloud Integration** - AWS, Azure, GCP monitoring with onboarding
+- **ESG Auditor Bot** - AI-powered compliance assistant
 - **Firebase Authentication** - Secure Google SSO and email/password login
 
 ## 📁 Project Structure
 
 ```
 EcoGenAI/
-├── backend/          # FastAPI backend with AI workload monitoring
-├── frontend-new/     # Production Next.js frontend with Firebase auth
-├── VERCEL-DEPLOYMENT.md  # Deployment guide for Vercel
-└── README.md         # This file
+├── backend/                    # FastAPI backend
+│   ├── app/
+│   │   ├── api/               # REST API endpoints
+│   │   ├── models/            # Database models
+│   │   ├── services/          # Business logic
+│   │   └── main.py            # Application entry
+│   └── requirements.txt       # Python dependencies
+│
+├── frontend-new/              # Next.js frontend
+│   ├── app/                   # Pages and routes
+│   ├── components/            # React components
+│   ├── lib/                   # Utilities
+│   └── package.json           # Node dependencies
+│
+├── start-all.bat              # One-click startup (Windows)
+├── start-all.ps1              # One-click startup (PowerShell)
+├── start-backend.ps1          # Backend startup script
+├── start-frontend.ps1         # Frontend startup script
+├── QUICK-START.md             # Quick start guide
+├── START-PROJECT.md           # Detailed setup guide
+└── README.md                  # This file
 ```
 
 ## 🛠️ Tech Stack

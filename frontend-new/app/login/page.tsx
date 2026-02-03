@@ -10,6 +10,8 @@ import { Leaf, Lock, Mail, AlertCircle, User, ArrowLeft } from "lucide-react"
 import { signInWithGoogle, signInWithEmail, signUpWithEmail } from "@/lib/firebase"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+
 declare global {
   interface Window {
     VANTA: any
@@ -140,7 +142,23 @@ export default function LoginPage() {
           setIsLoading(false)
           return
         }
-        if (user) router.push("/dashboard")
+        if (user) {
+          // Save email to localStorage
+          localStorage.setItem('userEmail', user.email || '');
+          
+          // Create profile in background (don't wait)
+          fetch(`${API_URL}/api/profile/create`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              email: user.email,
+              full_name: fullName 
+            })
+          }).catch(err => console.error('Profile creation error:', err));
+          
+          // Redirect immediately - new user goes to onboarding
+          router.push("/onboarding");
+        }
       } else {
         const { user, error: authError } = await signInWithEmail(email, password)
         if (authError) {
@@ -148,7 +166,34 @@ export default function LoginPage() {
           setIsLoading(false)
           return
         }
-        if (user) router.push("/dashboard")
+        if (user) {
+          // Save email to localStorage
+          localStorage.setItem('userEmail', user.email || '');
+          
+          // Update last login in background (don't wait)
+          fetch(`${API_URL}/api/profile/${user.email}/update-login`, {
+            method: 'POST'
+          }).catch(err => console.error('Login update error:', err));
+          
+          // Check onboarding status and redirect
+          try {
+            const response = await fetch(`${API_URL}/api/onboarding/status/${user.email}`, {
+              signal: AbortSignal.timeout(2000) // 2 second timeout
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              router.push(data.onboarding_completed ? "/dashboard" : "/onboarding");
+            } else {
+              // If API fails, assume onboarding needed
+              router.push("/onboarding");
+            }
+          } catch (error) {
+            // On timeout or error, go to onboarding (safe default)
+            console.warn('Onboarding check timeout, redirecting to onboarding');
+            router.push("/onboarding");
+          }
+        }
       }
     } catch (err: any) {
       setError(err.message || 'Authentication failed')
@@ -167,7 +212,32 @@ export default function LoginPage() {
         setIsLoading(false)
         return
       }
-      if (user) router.push("/dashboard")
+      if (user) {
+        // Save email to localStorage
+        localStorage.setItem('userEmail', user.email || '');
+        
+        // Update last login in background (don't wait)
+        fetch(`${API_URL}/api/profile/${user.email}/update-login`, {
+          method: 'POST'
+        }).catch(err => console.error('Login update error:', err));
+        
+        // Check onboarding status with timeout
+        try {
+          const response = await fetch(`${API_URL}/api/onboarding/status/${user.email}`, {
+            signal: AbortSignal.timeout(2000) // 2 second timeout
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            router.push(data.onboarding_completed ? "/dashboard" : "/onboarding");
+          } else {
+            router.push("/onboarding");
+          }
+        } catch (error) {
+          console.warn('Onboarding check timeout, redirecting to onboarding');
+          router.push("/onboarding");
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'Authentication failed')
       setIsLoading(false)

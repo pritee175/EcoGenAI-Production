@@ -240,6 +240,10 @@ export default function ReportsPage() {
             <TabsTrigger value="recent">Recent Reports</TabsTrigger>
             <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
             <TabsTrigger value="templates">Templates</TabsTrigger>
+            <TabsTrigger value="auditor">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Audit Assistant
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="recent" className="space-y-4">

@@ -10,10 +10,13 @@ import asyncio
 
 from .config import settings
 from .database import engine, Base, SessionLocal
-from .api import workloads, energy, carbon, optimization, esg_score, governance, phase2, auditor
+from .api import workloads, energy, carbon, optimization, esg_score, governance, phase2, auditor, onboarding, profile
 from .services.simulator import WorkloadSimulator
 from .services.energy_calculator import EnergyCalculator
 from .services.carbon_calculator import CarbonCalculator
+from .services.cloud_connector import CloudConnector
+from .models.cloud_integration import CloudIntegration, ConnectionStatus
+from .models.user_profile import UserProfile  # Import to ensure table creation
 from .websocket.manager import manager
 
 # Initialize database tables
@@ -113,6 +116,38 @@ def scheduled_update():
     except Exception as e:
         print(f"Error in scheduled update: {e}")
 
+def cloud_monitoring_job():
+    """
+    Background job that monitors cloud integrations
+    Runs every 30 seconds to detect new GPU workloads from connected cloud providers
+    This is what makes EcoGenAI a persistent monitoring engine
+    """
+    db = SessionLocal()
+    try:
+        # Get all active cloud integrations
+        integrations = db.query(CloudIntegration).filter(
+            CloudIntegration.status == ConnectionStatus.CONNECTED
+        ).all()
+        
+        for integration in integrations:
+            try:
+                # Detect GPU workloads from cloud provider
+                detected_workloads = CloudConnector.detect_gpu_workloads(integration, db)
+                
+                if detected_workloads:
+                    print(f"✓ Detected {len(detected_workloads)} workloads from {integration.provider.value}")
+                
+            except Exception as e:
+                print(f"Error monitoring {integration.provider.value} for {integration.user_email}: {e}")
+                integration.status = ConnectionStatus.FAILED
+                integration.error_message = str(e)
+                db.commit()
+        
+    except Exception as e:
+        print(f"Error in cloud monitoring job: {e}")
+    finally:
+        db.close()
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
@@ -121,8 +156,10 @@ async def lifespan(app: FastAPI):
     """
     # Startup: Initialize scheduler
     scheduler.add_job(scheduled_update, 'interval', seconds=5, id='workload_updater')
+    scheduler.add_job(cloud_monitoring_job, 'interval', seconds=30, id='cloud_monitor')
     scheduler.start()
     print("✓ APScheduler started - updating workloads every 5 seconds")
+    print("✓ Cloud monitoring started - checking cloud providers every 30 seconds")
     
     # Create initial demo workloads
     db = SessionLocal()
@@ -174,6 +211,8 @@ app.include_router(esg_score.router)
 app.include_router(governance.router)
 app.include_router(phase2.router)
 app.include_router(auditor.router)
+app.include_router(onboarding.router)
+app.include_router(profile.router)
 
 @app.get("/")
 def root():

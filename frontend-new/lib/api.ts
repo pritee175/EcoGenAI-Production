@@ -10,7 +10,7 @@ const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000';
 // Retry configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000; // 1 second
-const REQUEST_TIMEOUT = 10000; // 10 seconds
+const REQUEST_TIMEOUT = 30000; // 30 seconds (increased for slower endpoints)
 
 // Helper function for fetch with timeout and retry
 async function fetchWithRetry(
@@ -19,7 +19,9 @@ async function fetchWithRetry(
   retries = MAX_RETRIES
 ): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+  const timeoutId = setTimeout(() => {
+    controller.abort(new Error('Request timeout'));
+  }, REQUEST_TIMEOUT);
 
   try {
     const response = await fetch(url, {
@@ -35,7 +37,13 @@ async function fetchWithRetry(
   } catch (error) {
     clearTimeout(timeoutId);
     
-    if (retries > 0 && (error instanceof Error && error.name !== 'AbortError')) {
+    // Don't retry on abort errors (timeout)
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error(`Request to ${url} timed out after ${REQUEST_TIMEOUT}ms`);
+      throw new Error('Request timeout - please check if the backend server is running');
+    }
+    
+    if (retries > 0) {
       console.warn(`Retrying request to ${url}, ${retries} attempts left`);
       await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
       return fetchWithRetry(url, options, retries - 1);

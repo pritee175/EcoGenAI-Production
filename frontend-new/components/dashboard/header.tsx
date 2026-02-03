@@ -1,6 +1,6 @@
 "use client"
 
-import { Activity, Bell, User, Languages } from "lucide-react"
+import { Bell, User, Languages, LogOut, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -11,6 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/lib/language-context"
+import { useAuth } from "@/lib/auth-context"
+import { logOut } from "@/lib/firebase"
+import { useRouter } from "next/navigation"
 
 interface HeaderProps {
   title: string
@@ -18,6 +21,21 @@ interface HeaderProps {
 
 export function Header({ title }: HeaderProps) {
   const { mode, toggleMode } = useLanguage()
+  const { user, profile, loading } = useAuth()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    await logOut()
+    router.push('/login')
+  }
+
+  const handleProfileClick = () => {
+    router.push('/dashboard/profile')
+  }
+
+  // Get display name and role
+  const displayName = profile?.full_name || user?.displayName || user?.email?.split('@')[0] || 'User'
+  const displayRole = profile?.job_title || 'Team Member'
   
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-white backdrop-blur" style={{ borderColor: '#d4d4d4' }}>
@@ -65,22 +83,55 @@ export function Header({ title }: HeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center gap-2 px-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: '#e6f2f9' }}>
-                <User className="h-4 w-4" style={{ color: '#003781' }} />
-              </div>
+              {profile?.avatar_url ? (
+                <img 
+                  src={profile.avatar_url} 
+                  alt={displayName}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : user?.photoURL ? (
+                <img 
+                  src={user.photoURL} 
+                  alt={displayName}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full" style={{ backgroundColor: '#e6f2f9' }}>
+                  <User className="h-4 w-4" style={{ color: '#003781' }} />
+                </div>
+              )}
               <div className="hidden text-left md:block">
-                <p className="text-sm font-medium" style={{ color: '#333333' }}>Sarah Mueller</p>
-                <p className="text-xs" style={{ color: '#666666' }}>ESG Analyst</p>
+                {loading ? (
+                  <>
+                    <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-1"></div>
+                    <div className="h-3 w-20 bg-gray-200 rounded animate-pulse"></div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium" style={{ color: '#333333' }}>{displayName}</p>
+                    <p className="text-xs" style={{ color: '#666666' }}>{displayRole}</p>
+                  </>
+                )}
               </div>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium">{displayName}</p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem>Preferences</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfileClick}>
+              <Settings className="mr-2 h-4 w-4" />
+              Profile Settings
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive">Sign Out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
