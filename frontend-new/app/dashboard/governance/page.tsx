@@ -87,6 +87,7 @@ const auditTrail = [
 
 export default function GovernancePage() {
   const [approvals, setApprovals] = useState(pendingApprovals)
+  const [generatingReport, setGeneratingReport] = useState(false)
 
   const handleApprove = (id: number) => {
     setApprovals(prev => prev.filter(a => a.id !== id))
@@ -94,6 +95,34 @@ export default function GovernancePage() {
 
   const handleReject = (id: number) => {
     setApprovals(prev => prev.filter(a => a.id !== id))
+  }
+
+  const handleGenerateReport = async (format: 'json' | 'csv') => {
+    setGeneratingReport(true)
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const endpoint = format === 'csv' 
+        ? `${API_URL}/api/governance/reports/export/csv?period_days=30`
+        : `${API_URL}/api/governance/reports/export/json?period_days=30`
+      
+      const response = await fetch(endpoint)
+      if (!response.ok) throw new Error('Failed to generate report')
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `esg_report_30days.${format}`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+    } catch (error) {
+      console.error('Error generating report:', error)
+      alert('Failed to generate report. Please try again.')
+    } finally {
+      setGeneratingReport(false)
+    }
   }
 
   return (
@@ -248,6 +277,74 @@ export default function GovernancePage() {
                 ))}
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* ESG Report Generation */}
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="text-foreground">ESG Reports</CardTitle>
+            <CardDescription>Generate comprehensive ESG compliance reports</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-secondary/20 p-4">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-foreground mb-1">Comprehensive ESG Report (Last 30 Days)</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Includes executive summary, workload analysis, carbon footprint, energy consumption, 
+                      cost analysis, and optimization recommendations.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      className="border-border bg-transparent"
+                      onClick={() => handleGenerateReport('csv')}
+                      disabled={generatingReport}
+                    >
+                      <FileText className="mr-1 h-4 w-4" />
+                      {generatingReport ? 'Generating...' : 'Download CSV'}
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      className="bg-primary hover:bg-primary/90"
+                      onClick={() => handleGenerateReport('json')}
+                      disabled={generatingReport}
+                    >
+                      <FileText className="mr-1 h-4 w-4" />
+                      {generatingReport ? 'Generating...' : 'Download JSON'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="rounded-lg border border-border bg-secondary/10 p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Leaf className="h-4 w-4 text-success" />
+                    <span className="text-xs font-medium text-muted-foreground">Carbon Tracking</span>
+                  </div>
+                  <p className="text-sm text-foreground">Complete CO₂e emissions data</p>
+                </div>
+                <div className="rounded-lg border border-border bg-secondary/10 p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <DollarSign className="h-4 w-4 text-warning" />
+                    <span className="text-xs font-medium text-muted-foreground">Cost Analysis</span>
+                  </div>
+                  <p className="text-sm text-foreground">Financial impact breakdown</p>
+                </div>
+                <div className="rounded-lg border border-border bg-secondary/10 p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Shield className="h-4 w-4 text-primary" />
+                    <span className="text-xs font-medium text-muted-foreground">Compliance</span>
+                  </div>
+                  <p className="text-sm text-foreground">Audit-ready documentation</p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
