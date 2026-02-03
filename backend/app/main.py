@@ -186,21 +186,11 @@ app = FastAPI(
 )
 
 # CORS configuration for Next.js frontend
-# Allow multiple ports for development and production Vercel deployment
+# Allow all origins temporarily for debugging (will restrict after testing)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:3001",
-        "http://127.0.0.1:3002",
-        "https://eco-gen-ai-jl2y.vercel.app",
-        "https://eco-gen-ai-jl2y-gmailcoms-projects.vercel.app",
-        "https://eco-gen-ai-jl2y-git-main-gmailcoms-projects.vercel.app",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all origins for now
+    allow_credentials=False,  # Must be False when using wildcard
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
     expose_headers=["*"],
