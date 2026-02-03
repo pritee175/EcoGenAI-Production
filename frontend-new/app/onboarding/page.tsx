@@ -83,20 +83,30 @@ export default function OnboardingPage() {
     setLoading(true);
     setError("");
     
-    // Save selection in background, don't wait
-    fetch(`${API_URL}/api/onboarding/step/cloud-selection`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_email: userEmail,
-        provider: provider,
-        organization_name: organizationName || undefined
-      })
-    }).catch(err => console.error('Cloud selection error:', err));
-    
-    // Move to next step immediately
-    setCurrentStep(3);
-    setLoading(false);
+    try {
+      // MUST wait for cloud selection to be saved before moving to next step
+      const response = await fetch(`${API_URL}/api/onboarding/step/cloud-selection`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_email: userEmail,
+          provider: provider,
+          organization_name: organizationName || undefined
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save cloud selection');
+      }
+      
+      // Only move to next step after successful save
+      setCurrentStep(3);
+    } catch (err) {
+      console.error('Cloud selection error:', err);
+      setError("Failed to save cloud selection. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCredentialsSubmit = async () => {

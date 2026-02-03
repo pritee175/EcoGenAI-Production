@@ -132,13 +132,16 @@ def complete_cloud_selection(request: CloudSelectionRequest, db: Session = Depen
         )
         db.add(integration)
     
-    # Update onboarding status
+    # Get or create onboarding status
     status = db.query(OnboardingStatus).filter(
         OnboardingStatus.user_email == request.user_email
     ).first()
     
-    if status:
-        status.step_cloud_selection_completed = True
+    if not status:
+        status = OnboardingStatus(user_email=request.user_email)
+        db.add(status)
+    
+    status.step_cloud_selection_completed = True
     
     db.commit()
     

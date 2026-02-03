@@ -281,67 +281,93 @@ class CloudConnector:
     @staticmethod
     def _detect_gcp_workloads(integration: CloudIntegration, db: Session) -> List[Dict]:
         """
-        Detect GPU workloads from GCP
-        
-        In production:
-        1. Use GCP SDK to query Compute Engine instances with GPUs
-        2. Check Vertex AI training jobs
-        3. Query Cloud Monitoring for GPU utilization
-        
-        Production implementation example:
-        ```python
-        from google.oauth2 import service_account
-        from googleapiclient import discovery
-        import json
-        
-        # Parse service account JSON
-        sa_info = json.loads(integration.access_key)
-        credentials = service_account.Credentials.from_service_account_info(sa_info)
-        
-        compute = discovery.build('compute', 'v1', credentials=credentials)
-        project = integration.provider_account_id
-        
-        # List all zones
-        zones_result = compute.zones().list(project=project).execute()
-        
-        for zone in zones_result.get('items', []):
-            zone_name = zone['name']
-            
-            # List instances in this zone
-            instances_result = compute.instances().list(
-                project=project,
-                zone=zone_name
-            ).execute()
-            
-            for instance in instances_result.get('items', []):
-                # Check if instance has GPUs
-                guest_accelerators = instance.get('guestAccelerators', [])
-                
-                if guest_accelerators:
-                    instance_id = instance['id']
-                    instance_name = instance['name']
-                    gpu_count = sum(acc['acceleratorCount'] for acc in guest_accelerators)
-                    region = zone_name[:-2]  # Remove zone letter
-                    
-                    # Check if workload exists
-                    existing = db.query(AIWorkload).filter(
-                        AIWorkload.cloud_instance_id == str(instance_id)
-                    ).first()
-                    
-                    if not existing:
-                        metadata = {
-                            "model_name": f"GCP-{instance_name}",
-                            "job_type": "inference",
-                            "gpu_count": gpu_count,
-                            "region": region,
-                            "start_time": datetime.utcnow(),
-                            "cloud_instance_id": str(instance_id)
-                        }
-                        CloudConnector.create_workload_from_cloud_metadata(metadata, integration, db)
-        ```
+        Detect GPU workloads from GCP - REAL IMPLEMENTATION
+        Queries Compute Engine for GPU instances
         """
-        print(f"Monitoring GCP project {integration.provider_account_id}...")
-        return []
+        print(f"🔍 Monitoring GCP project {integration.provider_account_id}...")
+        
+        try:
+            from google.oauth2 import service_account
+            from googleapiclient import discovery
+            import json
+            
+            # Parse service account JSON
+            sa_info = json.loads(integration.access_key)
+            credentials = service_account.Credentials.from_service_account_info(sa_info)
+            
+            compute = discovery.build('compute', 'v1', credentials=credentials)
+            project = integration.provider_account_id
+            
+            detected_workloads = []
+            
+            # List all zones
+            try:
+                zones_result = compute.zones().list(project=project).execute()
+            except Exception as e:
+                print(f"⚠️  Could not list zones: {e}")
+                return []
+            
+            for zone in zones_result.get('items', []):
+                zone_name = zone['name']
+                
+                try:
+                    # List instances in this zone
+                    instances_result = compute.instances().list(
+                        project=project,
+                        zone=zone_name
+                    ).execute()
+                    
+                    for instance in instances_result.get('items', []):
+                        # Check if instance has GPUs
+                        guest_accelerators = instance.get('guestAccelerators', [])
+                        
+                        if guest_accelerators and instance.get('status') == 'RUNNING':
+                            instance_id = instance['id']
+                            instance_name = instance['name']
+                            gpu_count = sum(acc['acceleratorCount'] for acc in guest_accelerators)
+                            gpu_type = guest_accelerators[0].get('acceleratorType', 'unknown').split('/')[-1]
+                            region = zone_name[:-2]  # Remove zone letter (e.g., us-central1-a -> us-central1)
+                            
+                            # Check if workload already exists
+                            existing = db.query(AIWorkload).filter(
+                                AIWorkload.cloud_instance_id == str(instance_id)
+                            ).first()
+                            
+                            if not existing:
+                                print(f"✅ Found GPU instance: {instance_name} ({gpu_count}× {gpu_type} in {zone_name})")
+                                
+                                metadata = {
+                                    "model_name": f"GCP-{instance_name}",
+                                    "job_type": "inference",
+                                    "gpu_count": gpu_count,
+                                    "gpu_type": gpu_type,
+                                    "region": region,
+                                    "start_time": datetime.utcnow(),
+                                    "cloud_instance_id": str(instance_id)
+                                }
+                                
+                                workload = CloudConnector.create_workload_from_cloud_metadata(metadata, integration, db)
+                                detected_workloads.append(workload.to_dict())
+                            else:
+                                # Update existing workload status
+                                if existing.status != JobStatus.RUNNING:
+                                    existing.status = JobStatus.RUNNING
+                                    db.commit()
+                                    
+                except Exception as e:
+                    print(f"⚠️  Error checking zone {zone_name}: {e}")
+                    continue
+            
+            if detected_workloads:
+                print(f"✅ Detected {len(detected_workloads)} GPU workload(s) from GCP")
+            else:
+                print(f"ℹ️  No GPU instances found in GCP project {project}")
+            
+            return detected_workloads
+            
+        except Exception as e:
+            print(f"❌ Error detecting GCP workloads: {e}")
+            return []
     
     @staticmethod
     def _detect_internal_workloads(integration: CloudIntegration, db: Session) -> List[Dict]:
