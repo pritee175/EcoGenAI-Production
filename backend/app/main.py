@@ -161,14 +161,15 @@ async def lifespan(app: FastAPI):
     print("✓ APScheduler started - updating workloads every 5 seconds")
     print("✓ Cloud monitoring started - checking cloud providers every 30 seconds")
     
-    # Create initial demo workloads
-    db = SessionLocal()
-    try:
-        for _ in range(3):
-            WorkloadSimulator.create_workload(db)
-        print("✓ Created initial demo workloads")
-    finally:
-        db.close()
+    # Create initial demo workloads (disabled - using real GCP monitoring)
+    # db = SessionLocal()
+    # try:
+    #     for _ in range(3):
+    #         WorkloadSimulator.create_workload(db)
+    #     print("✓ Created initial demo workloads")
+    # finally:
+    #     db.close()
+    print("✓ Demo workloads disabled - using real cloud monitoring")
     
     yield
     
