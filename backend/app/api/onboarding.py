@@ -303,3 +303,38 @@ def reconnect_integration(integration_id: int, db: Session = Depends(get_db)):
         integration.error_message = verification.get("error")
         db.commit()
         return {"message": verification.get("error"), "success": False}
+
+# ============================================================================
+# ADMIN/DEMO ENDPOINTS
+# ============================================================================
+
+@router.delete("/reset/{user_email}")
+def reset_user_onboarding(user_email: str, db: Session = Depends(get_db)):
+    """
+    RESET USER DATA - Deletes all onboarding and integration data for a user
+    Perfect for demo resets or testing
+    
+    This will:
+    - Delete onboarding status
+    - Delete cloud integrations
+    - Keep workload history (optional)
+    
+    User will see onboarding flow again on next login
+    """
+    # Delete onboarding status
+    db.query(OnboardingStatus).filter(
+        OnboardingStatus.user_email == user_email
+    ).delete()
+    
+    # Delete cloud integrations
+    db.query(CloudIntegration).filter(
+        CloudIntegration.user_email == user_email
+    ).delete()
+    
+    db.commit()
+    
+    return {
+        "message": f"All data for {user_email} has been reset. User will see onboarding on next login.",
+        "success": True,
+        "user_email": user_email
+    }
