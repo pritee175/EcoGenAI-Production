@@ -27,14 +27,20 @@ class CloudConnector:
         Verify cloud credentials are valid
         In production, this would make actual API calls to cloud providers
         
+        DEMO MODE: Use "DEMO_MODE_ECOGENAI" as credentials to enable demo with sample data
+        
         Args:
             provider: Cloud provider name (aws, azure, gcp, internal)
-            access_key: Access key or service account JSON
+            access_key: Access key or service account JSON (or "DEMO_MODE_ECOGENAI" for demo)
             secret_key: Secret key (for AWS/Azure)
             
         Returns:
             Dictionary with verification status and account details
         """
+        # Check for demo mode
+        if access_key == "DEMO_MODE_ECOGENAI" or (secret_key and secret_key == "DEMO_MODE_ECOGENAI"):
+            return CloudConnector._verify_demo_mode(provider)
+        
         # Simulated verification for demo
         # In production, replace with actual cloud SDK calls
         
@@ -114,6 +120,50 @@ class CloudConnector:
             "infrastructure_name": "Internal Data Center",
             "regions": ["datacenter-1", "datacenter-2"]
         }
+    
+    @staticmethod
+    def _verify_demo_mode(provider: str) -> Dict:
+        """
+        Demo mode verification - accepts DEMO_MODE_ECOGENAI as credentials
+        Perfect for presentations and demos to judges!
+        
+        Returns realistic demo account information
+        """
+        demo_accounts = {
+            "aws": {
+                "success": True,
+                "account_id": "999888777666",
+                "account_name": "EcoGenAI Demo - AWS Account",
+                "regions": ["us-east-1", "us-west-2", "eu-north-1", "ap-south-1"],
+                "demo_mode": True
+            },
+            "azure": {
+                "success": True,
+                "subscription_id": "demo-sub-1234-5678-abcd",
+                "tenant_name": "EcoGenAI Demo - Azure Tenant",
+                "regions": ["eastus", "westus2", "northeurope", "southindia"],
+                "demo_mode": True
+            },
+            "gcp": {
+                "success": True,
+                "project_id": "ecogenai-demo-project",
+                "project_name": "EcoGenAI Demo - GCP Project",
+                "regions": ["us-central1", "us-west1", "europe-north1", "asia-south1"],
+                "demo_mode": True
+            },
+            "internal": {
+                "success": True,
+                "infrastructure_name": "EcoGenAI Demo - Internal Data Center",
+                "regions": ["datacenter-us", "datacenter-eu"],
+                "demo_mode": True
+            }
+        }
+        
+        return demo_accounts.get(provider, {
+            "success": True,
+            "demo_mode": True,
+            "account_name": f"EcoGenAI Demo - {provider.upper()}"
+        })
     
     @staticmethod
     def detect_gpu_workloads(integration: CloudIntegration, db: Session) -> List[Dict]:

@@ -394,6 +394,25 @@ export default function OnboardingPage() {
               </div>
             </div>
 
+            {/* Demo Mode Hint */}
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start gap-3">
+                <Globe className="w-5 h-5 text-purple-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-purple-900 mb-1">🎭 Demo Mode for Presentations</h4>
+                  <p className="text-sm text-purple-800 mb-2">
+                    Presenting to judges or stakeholders? Use our demo mode with realistic sample data!
+                  </p>
+                  <div className="bg-white/50 rounded px-3 py-2 font-mono text-sm text-purple-900">
+                    <strong>Demo Credentials:</strong> DEMO_MODE_ECOGENAI
+                  </div>
+                  <p className="text-xs text-purple-700 mt-2">
+                    Simply paste "DEMO_MODE_ECOGENAI" in the credential fields below to see the platform in action with sample AI workloads.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-4 mb-6">
               <div>
                 <Label htmlFor="access-key">
