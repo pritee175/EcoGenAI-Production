@@ -332,11 +332,32 @@ export default function OnboardingPage() {
             </div>
 
             {error && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 text-red-600 bg-red-50 p-4 rounded-lg mb-4">
                 <AlertCircle className="w-5 h-5" />
                 <span>{error}</span>
               </div>
             )}
+
+            {/* Go Further Button */}
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={() => {
+                  if (selectedProvider) {
+                    handleCloudSelection(selectedProvider);
+                  } else {
+                    setError("Please select a cloud provider to continue");
+                  }
+                }}
+                disabled={loading || !selectedProvider}
+                className="bg-[#003781] hover:bg-[#002557] text-white px-8 py-3"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                ) : null}
+                Continue to Credentials
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </div>
           </Card>
         )}
 
